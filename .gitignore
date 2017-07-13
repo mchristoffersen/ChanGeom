@@ -1,0 +1,10 @@
+# Seti Folder
+Seti/*
+
+# Python bytecode
+*.pyc
+
+# Generated tiffs and shapefiles
+SampleChannelMasks/center_shp
+SampleChannelMasks/center_tif
+SampleChannelMasks/out_shp
