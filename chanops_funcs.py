@@ -16,6 +16,7 @@
 # the indicies to access would be points[0][0] and points[1][0]
 
 import numpy as np
+import scipy,sys
 
 # A binary pattern detection function, takes a numpy array representation of the image and
 # a 3x3 numpy array of the desired pattern as inputs. The function will match
@@ -106,21 +107,26 @@ def binhitmiss_shift(binar,ptn,idx_check,shift):
 def find_endpoints(imgar,idx_check):
 	interv1 = np.array([[0,0,0],[0,1,0],[-1,-1,0]])
 	interv2 = np.array([[0,0,0],[0,1,0],[0,-1,-1]])
-	listends = [],[]
+	listends = []
 	for k in range(4):
 		end1 = binhitmiss(imgar,np.rot90(interv1,k),idx_check)
 		end2 = binhitmiss(imgar,np.rot90(interv2,k),idx_check)
 		loc1 = list(np.where(end1==1))
 		loc2 = list(np.where(end2==1))
-		for item in range(len(loc1[0])):
-			listends[0].append(loc1[0][item])
-			listends[1].append(loc1[1][item])
+		for idx in range(len(loc1[0])):
+			loc = (loc1[0][idx],loc1[1][idx])
+			if loc not in listends:
+				listends.append(loc)
 
 		for idx in range(len(loc2[0])):
-			listends[0].append(loc2[0][idx])
-			listends[1].append(loc2[1][idx])
-
-	return listends
+			loc = (loc2[0][idx],loc2[1][idx])
+			if loc not in listends:
+				listends.append(loc)
+	lend = [],[]
+	for i in range(len(listends)):
+		lend[0].append(listends[i][0])
+		lend[1].append(listends[i][1])
+	return lend
 
 # Finds the indicies of ones around input pixels
 # Takes input "img", a binary image, and "locs", the list of points around

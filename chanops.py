@@ -95,11 +95,11 @@ len1 = len(idx1[0])
 #binar_skel = medial_axis(binar)
 binar_skel = thin(binar,0)
 
-scipy.misc.imsave(exporttif + 'outfile.png', binar_skel.astype("int8")*255)
-dataset = gdal.GetDriverByName('GTiff').Create(exporttif + '_skel.tif',n,m,1,GDT_Float32)
+#scipy.misc.imsave(exporttif + 'outfile.png', binar_skel.astype("int8")*255)
+dataset = gdal.GetDriverByName('GTiff').Create(exporttif + '_skel.tif',n,m,1,GDT_Byte)
 dataset.SetGeoTransform(src_raster.GetGeoTransform())
 dataset.SetProjection(src_raster.GetProjection())
-dataset.GetRasterBand(1).WriteArray(binar_skel)
+dataset.GetRasterBand(1).WriteArray(binar_skel*255)
 
 # Get rid of a problematic pattern
 probpat2 = np.array([[-1,1,-1],[1,0,1],[-1,1,-1]])
@@ -215,6 +215,7 @@ binar_width = np.array(binar_recon)
 
 # Multiply the channel skeleton by the distance transform to extract
 # only the width values along the centerline
+
 binar_width = np.multiply(distxfrm,binar_recon)
 
 # Trace length of channel
@@ -261,12 +262,12 @@ print('')
 dataset = gdal.GetDriverByName('GTiff').Create(exporttif + '_centerline.tif',n,m,1,gdal.GDT_Float32)
 dataset.SetGeoTransform(src_raster.GetGeoTransform())
 dataset.SetProjection(src_raster.GetProjection())
-dataset.GetRasterBand(1).WriteArray(cellsize*binar_width)
+dataset.GetRasterBand(1).WriteArray((cellsize*binar_width).astype("float32"))
 
 dataset = gdal.GetDriverByName('GTiff').Create(exporttif + '_centerline_cumdist.tif',n,m,1,GDT_Float32)
 dataset.SetGeoTransform(src_raster.GetGeoTransform())
 dataset.SetProjection(src_raster.GetProjection())
-dataset.GetRasterBand(1).WriteArray(np.multiply(cellsize,binar_dist))
+dataset.GetRasterBand(1).WriteArray(np.multiply(cellsize,binar_dist).astype("float32"))
 
 #Close the source raster
 src_raster = None
